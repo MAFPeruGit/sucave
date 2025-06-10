@@ -115,7 +115,7 @@ def generate_final_row(sheet_data):
     return final_row
 
 column_specs_latest = [
-    (3, 'left'), (4, 'left'), (3, 'left'), (4, 'left'), (4, 'left'), (3, 'left'), (6, 'left'), (1, 'none'), (1, 'none'),
+    (3, 'left'), (4, 'left'), (3, 'left'), (6, 'right'), (4, 'left'), (3, 'left'), (6, 'left'), (1, 'none'), (1, 'none'),
     (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (3, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'),
     (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'),
     (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left'), (6, 'left')
