@@ -1,11 +1,10 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
-from fastapi.middleware.cors 
+from fastapi.middleware.cors import CORSMiddleware 
 from tempfile import NamedTemporaryFile
 from calendar import monthrange
 from datetime import date
 import pandas as pd
-import CORSMiddleware
 
 app = FastAPI()
 
