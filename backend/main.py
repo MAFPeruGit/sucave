@@ -9,10 +9,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],           # Permite cualquier origen
+    allow_credentials=False,       # Solo así se acepta '*'
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 def es_bisiesto(anio):
     return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
