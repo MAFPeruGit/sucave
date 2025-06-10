@@ -2,8 +2,18 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
 from tempfile import NamedTemporaryFile
 import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # puedes reemplazar "*" por el dominio de tu frontend si deseas limitarlo
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 def fill_value_corrected(value, length, fill_side):
     if pd.isnull(value) or value == 'null':
