@@ -11,7 +11,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://9000-firebase-sucave-1749522290464.cluster-qhrn7lb3szcfcud6uanedbkjnm.cloudworkstations.dev"
+        "https://sucave-web-maf.web.app/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
