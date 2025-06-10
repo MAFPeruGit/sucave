@@ -60,6 +60,7 @@ def generate_header(mes_reporte):
 def generate_final_row(sheet_data):
     final_row = " 50000"
     sum_columns_indices = [6] + [i for i in range(9, 31) if i != 13]
+    
     for index in range(len(sheet_data.columns)):
         if index == 0:
             final_row += " " * 3
@@ -91,6 +92,7 @@ def generate_final_row(sheet_data):
             final_row += f"{str(int(col_sum)).zfill(6)}"
         else:
             final_row += " " * 6
+
     return final_row
 
 column_specs_latest = [
