@@ -2,7 +2,6 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from tempfile import NamedTemporaryFile
-from calendar import monthrange
 from datetime import date
 import pandas as pd
 
@@ -10,11 +9,23 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Puedes reemplazar "*" por tu dominio real si deseas restringir
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def es_bisiesto(anio):
+    return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
+
+def dias_en_mes(mes, anio):
+    if mes == 2:
+        return 29 if es_bisiesto(anio) else 28
+    dias_fijos = {
+        1: 31, 3: 31, 4: 30, 5: 31, 6: 30,
+        7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    }
+    return dias_fijos.get(mes, 30)
 
 def fill_value_corrected(value, length, fill_side):
     if pd.isnull(value) or value == 'null':
@@ -47,7 +58,7 @@ def convert_row_to_format_corrected(excel_row, row_index, specs):
 
 def generate_header(mes_reporte):
     anio = date.today().year
-    _, ultimo_dia = monthrange(anio, mes_reporte)
+    ultimo_dia = dias_en_mes(mes_reporte, anio)
 
     valor_permanente1 = '02240100185'
     fecha_reporte = f"{anio}{mes_reporte:02d}{ultimo_dia:02d}"
@@ -66,7 +77,7 @@ def generate_header(mes_reporte):
 def generate_final_row(sheet_data):
     final_row = " 50000"
     sum_columns_indices = [6] + [i for i in range(9, 31) if i != 13]
-    
+
     for index in range(len(sheet_data.columns)):
         if index == 0:
             final_row += " " * 3
@@ -98,7 +109,6 @@ def generate_final_row(sheet_data):
             final_row += f"{str(int(col_sum)).zfill(6)}"
         else:
             final_row += " " * 6
-
     return final_row
 
 column_specs_latest = [
@@ -111,7 +121,7 @@ column_specs_latest = [
 @app.post("/generar-archivo")
 def generar_archivo(file: UploadFile, mes: int = Form(...)):
     anio = date.today().year
-    _, ultimo_dia = monthrange(anio, mes)
+    ultimo_dia = dias_en_mes(mes, anio)
 
     df = pd.read_excel(file.file, header=None).iloc[1:].dropna(how='all')
     header = generate_header(mes)
