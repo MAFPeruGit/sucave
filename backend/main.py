@@ -1,19 +1,20 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
-from tempfile import NamedTemporaryFile
-import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
-
+from tempfile import NamedTemporaryFile
+from calendar import monthrange
+from datetime import date
+import pandas as pd
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # puedes reemplazar "*" por el dominio de tu frontend si deseas limitarlo
+    allow_origins=["*"],  # Puedes reemplazar "*" por tu dominio real si deseas restringir
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 def fill_value_corrected(value, length, fill_side):
     if pd.isnull(value) or value == 'null':
@@ -45,15 +46,28 @@ def convert_row_to_format_corrected(excel_row, row_index, specs):
     return f"{correlativo_spaces}{row_index:01d}{concatenated_values}"
 
 def generate_header(mes_reporte):
+    anio = date.today().year
+    _, ultimo_dia = monthrange(anio, mes_reporte)
+
     valor_permanente1 = '02240100185'
-    fecha_reporte = f"2025{mes_reporte:02d}30"
+    fecha_reporte = f"{anio}{mes_reporte:02d}{ultimo_dia:02d}"  # Ej: 20250430
     valor_permanente2 = '0004000'
+
     meses_codigos = {
-        1: '31000000000', 2: '41000000000', 3: '51000000000',
-        4: '61000000000', 5: '71000000000', 6: '81000000000',
-        7: '91000000000', 8: '10100000000', 9: '11100000000',
-        10: '12100000000', 11: '13100000000', 12: '14100000000'
+        1: '31000000000',
+        2: '41000000000',
+        3: '51000000000',
+        4: '61000000000',
+        5: '71000000000',
+        6: '81000000000',
+        7: '91000000000',
+        8: '10100000000',
+        9: '11100000000',
+        10: '12100000000',
+        11: '13100000000',
+        12: '14100000000'
     }
+
     depende_del_mes = meses_codigos[mes_reporte]
     return f"{valor_permanente1}{fecha_reporte}{valor_permanente2}{depende_del_mes}"
 
@@ -104,6 +118,9 @@ column_specs_latest = [
 
 @app.post("/generar-archivo")
 def generar_archivo(file: UploadFile, mes: int = Form(...)):
+    anio = date.today().year
+    _, ultimo_dia = monthrange(anio, mes)
+
     df = pd.read_excel(file.file, header=None).iloc[1:].dropna(how='all')
     header = generate_header(mes)
     formatted_lines = [convert_row_to_format_corrected(df.iloc[i], i + 1, column_specs_latest) for i in range(len(df))]
@@ -116,4 +133,5 @@ def generar_archivo(file: UploadFile, mes: int = Form(...)):
         tmp.write(final_row + '\n')
         temp_path = tmp.name
 
-    return FileResponse(temp_path, filename=f"0125{mes:02d}31.224", media_type='text/plain')
+    nombre_archivo = f"01{str(anio)[-2:]}{mes:02d}{ultimo_dia:02d}.224"
+    return FileResponse(temp_path, filename=nombre_archivo, media_type='text/plain')
