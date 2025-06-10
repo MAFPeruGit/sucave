@@ -1,16 +1,18 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors 
 from tempfile import NamedTemporaryFile
+from calendar import monthrange
 from datetime import date
 import pandas as pd
+import CORSMiddleware
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],           # Permite cualquier origen
-    allow_credentials=False,       # Solo así se acepta '*'
+    allow_origins=["*"],  # puedes reemplazar "*" por el dominio de tu frontend si deseas limitarlo
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -137,4 +139,4 @@ def generar_archivo(file: UploadFile, mes: int = Form(...)):
         temp_path = tmp.name
 
     nombre_archivo = f"01{str(anio)[-2:]}{mes:02d}{ultimo_dia:02d}.224"
-    return FileResponse(temp_path, filename=nombre_archivo, media_type='text/plain',as_attachment=True)
+    return FileResponse(temp_path, filename=nombre_archivo, media_type='text/plain', as_attachment=True)
