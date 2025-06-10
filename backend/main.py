@@ -11,7 +11,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://sucave-web-maf.web.app/"
+        "https://sucave-web-maf.web.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
