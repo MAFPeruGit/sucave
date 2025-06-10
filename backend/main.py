@@ -136,4 +136,4 @@ def generar_archivo(file: UploadFile, mes: int = Form(...)):
         temp_path = tmp.name
 
     nombre_archivo = f"01{str(anio)[-2:]}{mes:02d}{ultimo_dia:02d}.224"
-    return FileResponse(temp_path, filename=nombre_archivo, media_type='text/plain')
+    return FileResponse(temp_path, filename=nombre_archivo, media_type='text/plain',as_attachment=True)
