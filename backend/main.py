@@ -10,12 +10,13 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # puedes reemplazar "*" por el dominio de tu frontend si deseas limitarlo
+    allow_origins=[
+        "https://9000-firebase-sucave-1749522290464.cluster-qhrn7lb3szcfcud6uanedbkjnm.cloudworkstations.dev"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 def es_bisiesto(anio):
     return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
